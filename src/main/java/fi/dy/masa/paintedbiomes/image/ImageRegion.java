@@ -9,13 +9,13 @@ public class ImageRegion extends ImageBase implements IImageReader
     protected final int regionX;
     protected final int regionZ;
 
-    public ImageRegion(int dimension, int regionX, int regionZ, long seed, File templatePath)
+    public ImageRegion(int dimension, int regionX, int regionZ, long seed, File templatePath, boolean isHeightMap)
     {
         super(dimension, seed);
 
         this.regionX = regionX;
         this.regionZ = regionZ;
-        this.name = "r." + regionX + "." + regionZ;
+        this.name = (isHeightMap ? "h" : "") + "r." + regionX + "." + regionZ;
 
         this.setTemplateTransformations(this.regionX, this.regionZ);
         this.readTemplateImage(templatePath);

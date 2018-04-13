@@ -9,13 +9,15 @@ public class ImageSingle extends ImageBase implements IImageReader
     protected final int templateAlignmentMode;
     protected final int templateAlignmentX;
     protected final int templateAlignmentZ;
+    protected final boolean isHeightMap;
+    protected final String filenamePrefix; 
 
     protected int minX;
     protected int maxX;
     protected int minZ;
     protected int maxZ;
 
-    public ImageSingle(int dimension, long seed, File templatePath)
+    public ImageSingle(int dimension, long seed, File templatePath, boolean isHeightMap)
     {
         super(dimension, seed);
 
@@ -24,6 +26,8 @@ public class ImageSingle extends ImageBase implements IImageReader
         this.templateAlignmentX = conf.templateAlignmentX;
         this.templateAlignmentZ = conf.templateAlignmentZ;
         this.templatePath = templatePath;
+        this.isHeightMap = isHeightMap;
+        this.filenamePrefix = isHeightMap ? "heightmap" : "biomes";
     }
 
     public void init()
@@ -34,11 +38,11 @@ public class ImageSingle extends ImageBase implements IImageReader
 
     protected void readTemplateImage(File templatePath)
     {
-        File templateFile = new File(templatePath, "biomes.png");
+        File templateFile = new File(templatePath, this.filenamePrefix + ".png");
 
         if (this.useAlternateTemplates)
         {
-            File tmpFile = new File(templatePath, "biomes_alt_" + (this.alternateTemplate + 1) + ".png");
+            File tmpFile = new File(templatePath, this.filenamePrefix + "_alt_" + (this.alternateTemplate + 1) + ".png");
 
             if (tmpFile.exists() && tmpFile.isFile())
             {

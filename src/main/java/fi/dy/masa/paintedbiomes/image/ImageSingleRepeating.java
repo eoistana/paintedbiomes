@@ -17,9 +17,9 @@ public class ImageSingleRepeating extends ImageSingle
 
     protected BufferedImage[] templates;
 
-    public ImageSingleRepeating(int dimension, long seed, File templatePath)
+    public ImageSingleRepeating(int dimension, long seed, File templatePath, boolean isHeightMap)
     {
-        super(dimension, seed, templatePath);
+        super(dimension, seed, templatePath, isHeightMap);
 
         Configs conf = Configs.getConfig(this.dimension);
 

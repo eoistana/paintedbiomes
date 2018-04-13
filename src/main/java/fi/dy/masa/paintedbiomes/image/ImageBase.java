@@ -266,6 +266,18 @@ public abstract class ImageBase implements IImageReader
 
         return biomeID != -1 ? biomeID : this.getUndefinedAreaBiomeID(defaultBiomeID);
     }
+    
+    protected int getHeightValueFromHeightmapImage(int areaX, int areaZ, int defaultHeight)
+    {
+    	//TODO: Add noise from green and blue channels
+        int imageX = this.getImageX(areaX, areaZ);
+        int imageY = this.getImageY(areaX, areaZ);
+        int alpha = this.getImageAlphaAt(imageX, imageY);
+
+        int rgb = this.imageData.getRGB(imageX, imageY);
+
+        return (rgb & 0x00FF0000) >> 16;
+    }
 
     @Override
     public boolean isBiomeDefinedAt(int blockX, int blockZ)
@@ -287,5 +299,15 @@ public abstract class ImageBase implements IImageReader
         }
 
         return this.getBiomeIdFromTemplateImage(this.getAreaX(blockX), this.getAreaZ(blockZ), defaultBiomeID);
+    }
+    
+    @Override
+    public int getHeightAt(int blockX, int blockZ, int defaultHeight) 
+    {
+    	if (this.isLocationCoveredByTemplate(blockX, blockZ) == false)
+        {
+            return defaultHeight;
+        }
+        return this.getHeightValueFromHeightmapImage(this.getAreaX(blockX), this.getAreaZ(blockZ), defaultHeight);
     }
 }

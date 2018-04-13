@@ -14,13 +14,15 @@ public class ImageCache
     protected final Map<RegionCoords, Long> timeouts;
     protected final File templatePath;
     protected final long seed;
+    protected final boolean isHeightMap;
 
-    public ImageCache(long seed, File templatePath)
+    public ImageCache(long seed, File templatePath, boolean isHeightMap)
     {
         this.imageRegions = new HashMap<RegionCoords, IImageReader>();
         this.timeouts = new HashMap<RegionCoords, Long>();
         this.templatePath = templatePath;
         this.seed = seed;
+        this.isHeightMap = isHeightMap;
     }
 
     public IImageReader getRegionImage(int dimension, int blockX, int blockZ)
@@ -30,7 +32,7 @@ public class ImageCache
 
         if (imageRegion == null)
         {
-            imageRegion = new ImageRegion(regionCoords.dimension, regionCoords.regionX, regionCoords.regionZ, this.seed, this.templatePath);
+            imageRegion = new ImageRegion(regionCoords.dimension, regionCoords.regionX, regionCoords.regionZ, this.seed, this.templatePath, this.isHeightMap);
             this.imageRegions.put(regionCoords, imageRegion);
         }
 

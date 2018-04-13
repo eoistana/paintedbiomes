@@ -11,6 +11,9 @@ public class ImageHandler implements IImageReader
     private static final TIntObjectHashMap<ImageHandler> HANDLERS = new TIntObjectHashMap<ImageHandler>();
     private ImageCache regionImageCache;
     private ImageSingle singleImage;
+    
+    private ImageCache regionHeightMapCache;
+    private ImageSingle singleHeightMap;
 
     private static File templateBasePathGlobal;
     private static File templateBasePathWorld;
@@ -77,21 +80,29 @@ public class ImageHandler implements IImageReader
         if (this.useSingleTemplateImage == false)
         {
             this.singleImage = null;
-            this.regionImageCache = new ImageCache(seed, this.templatePath);
+            this.singleHeightMap = null;
+            this.regionImageCache = new ImageCache(seed, this.templatePath, false);
+            this.regionHeightMapCache = new ImageCache(seed, this.templatePath, true);
         }
         // Single template image mode, with some type of template repeating
         else if (configs.useTemplateRepeating)
         {
-            this.singleImage = new ImageSingleRepeating(this.dimension, seed, this.templatePath);
+            this.singleImage = new ImageSingleRepeating(this.dimension, seed, this.templatePath, false);
             this.singleImage.init();
+            this.singleHeightMap = new ImageSingleRepeating(this.dimension, seed, this.templatePath, true);
+            this.singleHeightMap.init();
             this.regionImageCache = null;
+            this.regionHeightMapCache = null;
         }
         // Single template image mode, no repeating
         else
         {
-            this.singleImage = new ImageSingle(this.dimension, seed, this.templatePath);
+            this.singleImage = new ImageSingle(this.dimension, seed, this.templatePath, false);
             this.singleImage.init();
+            this.singleHeightMap = new ImageSingle(this.dimension, seed, this.templatePath, true);
+            this.singleHeightMap.init();
             this.regionImageCache = null;
+            this.regionHeightMapCache = null;
         }
 
         return this;
@@ -138,5 +149,15 @@ public class ImageHandler implements IImageReader
         }
 
         return this.regionImageCache.getRegionImage(this.dimension, blockX, blockZ).getBiomeIDAt(blockX, blockZ, defaultBiomeID);
+    }
+    
+    @Override
+    public int getHeightAt(int blockX, int blockZ, int defaultHeight) {
+    	if (this.useSingleTemplateImage)
+        {
+            return this.singleHeightMap.getHeightAt(blockX, blockZ, defaultHeight);
+        }
+
+        return this.regionHeightMapCache.getRegionImage(this.dimension, blockX, blockZ).getHeightAt(blockX, blockZ, defaultHeight);
     }
 }

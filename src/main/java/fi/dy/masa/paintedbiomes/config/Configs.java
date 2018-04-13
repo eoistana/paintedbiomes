@@ -57,6 +57,9 @@ public class Configs
     public int repeatTemplatePositiveZ;
     public int repeatTemplateNegativeX;
     public int repeatTemplateNegativeZ;
+    
+    public boolean useHeightMapRepeating;
+    public boolean useSingleHeightMapImage;
 
     private Configs(File configFile, boolean isMaster)
     {
@@ -65,6 +68,7 @@ public class Configs
         this.enabledInDimensions = new int[0];
         this.useSingleTemplateImage = true;
         this.useCustomColorMappings = true;
+        this.useSingleHeightMapImage = true;
     }
 
     private Configs(File configDir, int dimension)
@@ -212,6 +216,8 @@ public class Configs
         this.chunkProviderType          = old.chunkProviderType;
         this.chunkProviderOptions       = old.chunkProviderOptions;
         this.enabledInDimensions        = old.enabledInDimensions.clone();
+        this.useSingleHeightMapImage    = old.useSingleHeightMapImage;
+        this.useHeightMapRepeating      = old.useHeightMapRepeating;
 
         return this;
     }
@@ -311,7 +317,6 @@ public class Configs
         this.overrideChunkProvider = prop.getBoolean();
 
         prop = conf.get(category, "chunkProviderType", this.chunkProviderType);
-        prop.setComment("The ChunkProvider to use. Valid values: VANILLA_DEFAULT, VANILLA_FLAT, VANILLA_HELL, VANILLA_END");
         this.chunkProviderType = prop.getString() != null ? prop.getString() : "";
 
         prop = conf.get(category, "chunkProviderOptions", this.chunkProviderOptions);

@@ -25,4 +25,14 @@ public interface IImageReader
      * @return The Biome ID to be used for the world generation at the given block coordinates
      */
     public int getBiomeIDAt(int blockX, int blockZ, int defaultBiomeID);
+    
+    /**
+     * Returns the height from the heightmap image at the given world coordinates.
+     * @param blockX
+     * @param blockZ
+     * @param defaultHeight
+     * @return The height used to generate the terrain.
+     */
+    public int getHeightAt(int blockX, int blockZ, int defaultHeight);
+    
 }

@@ -27,6 +27,7 @@ import fi.dy.masa.paintedbiomes.image.ImageHandler;
 import fi.dy.masa.paintedbiomes.world.BiomeProviderPaintedBiomes;
 import fi.dy.masa.paintedbiomes.world.GenLayerBiomeGeneration;
 import fi.dy.masa.paintedbiomes.world.GenLayerBiomeIndex;
+import fi.dy.masa.paintedbiomes.world.generator.ChunkGeneratorPaintedBiomes;
 
 public class PaintedBiomesEventHandler
 {
@@ -191,6 +192,11 @@ public class PaintedBiomesEventHandler
         else if (chunkProviderType.equals("VANILLA_END"))
         {
             return new ChunkGeneratorEnd(world, world.getWorldInfo().isMapFeaturesEnabled(), world.getSeed(), new BlockPos(100, 50, 0));
+        }
+        else if (chunkProviderType.equals("PAINTEDBIOMES_HEIGHTMAPPED"))
+        {
+        	ImageHandler imageHandler = ImageHandler.getImageHandler(world.provider.getDimension()).init(world.getSeed());
+        	return new ChunkGeneratorPaintedBiomes(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions, imageHandler);
         }
 
         return null;
