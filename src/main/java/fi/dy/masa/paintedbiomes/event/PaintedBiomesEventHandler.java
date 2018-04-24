@@ -198,8 +198,8 @@ public class PaintedBiomesEventHandler
         }
         else if (chunkProviderType.equals("PAINTEDBIOMES"))
         {
-        	FeatureHandler featureHandler = FeatureHandler.getFeatureHandler(world.provider.getDimension()).init(world.getSeed());
-        	return new ChunkGeneratorPaintedBiomes(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions, featureHandler);
+            FeatureHandler featureHandler = FeatureHandler.getFeatureHandler(world.provider.getDimension()).init(world.getSeed());
+            return new ChunkGeneratorPaintedBiomes(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions, featureHandler);
         }
 
         return null;

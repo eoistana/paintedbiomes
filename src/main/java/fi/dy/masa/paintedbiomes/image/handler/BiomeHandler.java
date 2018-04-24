@@ -16,46 +16,46 @@ public class BiomeHandler extends Handler<BiomeHandler>
 {
     private int unpaintedAreaBiomeID;
 
-	protected BiomeHandler(int dimension)
+    protected BiomeHandler(int dimension)
     {
-    	super(dimension);
-	}
+        super(dimension);
+    }
 
-	public static BiomeHandler getBiomeHandler(int dimension)
+    public static BiomeHandler getBiomeHandler(int dimension)
     {        
         return getHandler(BiomeHandler.class, dimension);
     }
-	
+
     public boolean isBiomeDefinedAt(int blockX, int blockZ)
     {
-    	if (isLocationCoveredByTemplate(blockX, blockZ) == false || getImageAlpha(blockX, blockZ) == 0)
+        if (isLocationCoveredByTemplate(blockX, blockZ) == false || getImageAlpha(blockX, blockZ) == 0)
         {
-        	return false;
+            return false;
         }
-    	
-    	int biomeID = ColorToBiomeMapping.getInstance().getBiomeIDForColor(this.getRGB(blockX, blockZ));
-		return biomeID != -1;
+
+        int biomeID = ColorToBiomeMapping.getInstance().getBiomeIDForColor(this.getRGB(blockX, blockZ));
+        return biomeID != -1;
     }
-    
+
     public int getBiomeIDAt(int blockX, int blockZ, int defaultBiomeID)
     {
         // Outside area or completely transparent pixel
         if (isLocationCoveredByTemplate(blockX, blockZ) == false || getImageAlpha(blockX, blockZ) == 0)
         {
-        	return getUnpaintedBiomeID(defaultBiomeID);
+            return getUnpaintedBiomeID(defaultBiomeID);
         }
-        
-		int biomeID = ColorToBiomeMapping.getInstance().getBiomeIDForColor(this.getRGB(blockX, blockZ));
-		return biomeID != -1 ? biomeID : this.getUnpaintedBiomeID(defaultBiomeID);
+
+        int biomeID = ColorToBiomeMapping.getInstance().getBiomeIDForColor(this.getRGB(blockX, blockZ));
+        return biomeID != -1 ? biomeID : this.getUnpaintedBiomeID(defaultBiomeID);
     }
 
-	private int getUnpaintedBiomeID(int defaultBiomeID) {
-		// If there is a biome defined for unpainted areas, then use that,
-		// otherwise use the biome from the regular terrain generation
-		return this.unpaintedAreaBiomeID != -1 ? this.unpaintedAreaBiomeID : defaultBiomeID;
-	}
-	 
-    
+    private int getUnpaintedBiomeID(int defaultBiomeID) {
+        // If there is a biome defined for unpainted areas, then use that,
+        // otherwise use the biome from the regular terrain generation
+        return this.unpaintedAreaBiomeID != -1 ? this.unpaintedAreaBiomeID : defaultBiomeID;
+    }
+
+
     protected static int getBiomeIDForRegistryName(String regName)
     {
         if (StringUtils.isBlank(regName) == false)
@@ -65,19 +65,19 @@ public class BiomeHandler extends Handler<BiomeHandler>
         }
         return -1;
     }
-    
-    @Override
-	protected void onInit(Configs configs)
-	{
-		this.unpaintedAreaBiomeID = getBiomeIDForRegistryName(configs.unpaintedAreaBiomeName);
-	}
 
-	@Override
-	protected IImageReader getImageReader()
-	{
-		if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "biomes");
-		return new ImageReaderSingleRepeating(this.templatePath, "biomes");
-	}
+    @Override
+    protected void onInit(Configs configs)
+    {
+        this.unpaintedAreaBiomeID = getBiomeIDForRegistryName(configs.unpaintedAreaBiomeName);
+    }
+
+    @Override
+    protected IImageReader getImageReader()
+    {
+        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "biomes");
+        return new ImageReaderSingleRepeating(this.templatePath, "biomes");
+    }
 
 
 }
