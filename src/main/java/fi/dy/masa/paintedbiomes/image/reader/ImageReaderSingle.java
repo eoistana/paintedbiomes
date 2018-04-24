@@ -70,7 +70,7 @@ public class ImageReaderSingle extends ImageReaderBase
     public boolean isLocationCoveredByTemplate(int blockX, int blockZ) 
     {
         return blockX >= this.worldPosMin.getX() && blockX <= this.worldPosMax.getX() 
-                && blockZ >= this.worldPosMin.getZ() && blockZ <= this.worldPosMax.getZ();
+            && blockZ >= this.worldPosMin.getZ() && blockZ <= this.worldPosMax.getZ();
     }
 
     @Override

@@ -2,6 +2,8 @@ package fi.dy.masa.paintedbiomes.config;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -359,9 +361,12 @@ public class Configs
         
         StructureIdToTemplateMapping structureIdToStructureNameMapping = new StructureIdToTemplateMapping();
         
-        //TODO:
-        structureIdToStructureNameMapping.addMapping(1, "house");
-        structureIdToStructureNameMapping.addMapping(0xFFFF, "house");
+        Set<Entry<String, Property>> structureColors = configCategory.entrySet();
+        
+        for(Entry<String, Property> entry : structureColors)
+        {
+            structureIdToStructureNameMapping.addMapping(getIntFromHexString("", entry.getValue(), -1), entry.getKey());
+        }
 	}
 
 	private void readColorToBiomeMappings(Configuration conf)
@@ -400,14 +405,7 @@ public class Configs
 
             if (prop != null)
             {
-                try
-                {
-                    color = Integer.parseInt(prop.getString(), 16);
-                }
-                catch (NumberFormatException e)
-                {
-                    PaintedBiomes.logger.warn("Failed to parse color value '{}' for biome '{}'", prop.getString(), registryName);
-                }
+                color = getIntFromHexString(registryName, prop, color);
             }
             // No mapping found in the config, add a default mapping, so that all the existing biomes will get added to the config
             else
@@ -458,6 +456,19 @@ public class Configs
 
             prop.setComment(String.format("Biome: %s, ID: %d (Color as int: %d)", registryName, biomeId, color));
         }
+    }
+
+    private int getIntFromHexString(String registryName, Property prop, int defaultValue)
+    {
+        try
+        {
+            return Integer.parseInt(prop.getString(), 16);
+        }
+        catch (NumberFormatException e)
+        {
+            PaintedBiomes.logger.warn("Failed to parse color value '{}' for biome '{}'", prop.getString(), registryName);
+        }
+        return defaultValue;
     }
 
     private int checkAndFixConfigValueInt(String configName, Property prop, int min, int max, int defaultValue)
