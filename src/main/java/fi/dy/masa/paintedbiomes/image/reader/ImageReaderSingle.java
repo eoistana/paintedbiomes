@@ -69,7 +69,6 @@ public class ImageReaderSingle extends ImageReaderBase
     @Override
     public boolean isLocationCoveredByTemplate(int blockX, int blockZ) 
     {
-        if(this.worldPosMin == null) return true;
         return blockX >= this.worldPosMin.getX() && blockX <= this.worldPosMax.getX() 
                 && blockZ >= this.worldPosMin.getZ() && blockZ <= this.worldPosMax.getZ();
     }
@@ -91,7 +90,6 @@ public class ImageReaderSingle extends ImageReaderBase
         this.templateFlip = 0;
 
         this.areaSize = rotateAndFlip(new BlockPos(this.imageWidth, 0, this.imageHeight), this.templateRotation, this.templateFlip);		
-        //this.worldPosMin = new BlockPos(0, 0, 0);
         this.worldPosMax = new BlockPos(Math.abs(this.areaSize.getX()), 0, Math.abs(this.areaSize.getZ())).add(this.worldPosMin);
 
         this.worldX = 0;

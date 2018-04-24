@@ -24,7 +24,7 @@ public class ImageReaderRegion extends ImageReaderBase
         //TODO: 
         int reverseTemplateRotation = 0, templateFlip = 0;
         
-        BlockPos regionStart = new BlockPos(pos.getX()>>10, 0, pos.getZ() >> 10);
+        BlockPos regionStart = new BlockPos(pos.getX()>>9, 0, pos.getZ() >> 9);
         BlockPos translatedToAreaPos = pos.subtract(regionStart);
         BlockPos rotatedToImageDirection = rotateAndFlip(translatedToAreaPos, reverseTemplateRotation, templateFlip);
         int x = rotatedToImageDirection.getX();
@@ -35,7 +35,7 @@ public class ImageReaderRegion extends ImageReaderBase
     @Override
     protected BufferedImage getImageAt(int blockX, int blockZ)
     {
-        long regionPos = ChunkPos.asLong(blockX >> 10, blockZ >> 10);
+        long regionPos = ChunkPos.asLong(blockX >> 9, blockZ >> 9);
         if(images.containsKey(regionPos) == false)
         {
             BufferedImage image = loadImage(blockX, blockZ);
@@ -55,7 +55,7 @@ public class ImageReaderRegion extends ImageReaderBase
 
     @Override
     protected String getFileName(int blockX, int blockZ) {
-        return "r." + (blockX >> 10) + "." + (blockZ >> 10);
+        return "r." + (blockX >> 9) + "." + (blockZ >> 9);
     }
 
     @Override
