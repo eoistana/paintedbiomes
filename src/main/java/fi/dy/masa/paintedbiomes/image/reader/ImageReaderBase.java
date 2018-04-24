@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Rotation;
 import fi.dy.masa.paintedbiomes.PaintedBiomes;
 
 public abstract class ImageReaderBase implements IImageReader
@@ -20,7 +21,7 @@ public abstract class ImageReaderBase implements IImageReader
     protected abstract BufferedImage getImageAt(int blockX, int blockZ);
     public abstract boolean isLocationCoveredByTemplate(int blockX, int blockZ);
 
-    protected abstract String getFileName(int blockX, int blockY);
+    protected abstract String getFileName(int blockX, int blockZ);
     protected String getFileSuffix() { return ".png"; }
 
     protected ImageReaderBase(File imagePath)
@@ -82,6 +83,7 @@ public abstract class ImageReaderBase implements IImageReader
 
                 PaintedBiomes.logger.info("Successfully read template image from '{}' (dimensions: {}x{})",
                         imageFile.getAbsolutePath(), image.getWidth(), image.getHeight());
+                initData(image);
                 return image;
             }
             else
@@ -109,5 +111,16 @@ public abstract class ImageReaderBase implements IImageReader
         this.imageHeight = imageData.getHeight();
         this.imageWidth = imageData.getWidth();
         onInitData();
+    }
+    
+    protected static BlockPos rotateAndFlip(BlockPos pos, int templateRotation, int templateFlip)
+    {
+        pos = pos.rotate(Rotation.values()[templateRotation]);
+        int x = pos.getX();
+        if ((templateFlip & 0x1) != 0) x = -x; // Flip the template on the X-axis
+        int y = pos.getY();
+        int z = pos.getZ();
+        if ((templateFlip & 0x2) != 0) z = -z; // Flip the template on the Z-axis
+        return new BlockPos(x, y, z);
     }
 }

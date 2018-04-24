@@ -37,7 +37,7 @@ public class PaintedBiomesEventHandler
     {
         if (event.phase == TickEvent.Phase.START)
         {
-            BiomeHandler.tickTimeouts();
+            BiomeHandler.tickTimeouts(BiomeHandler.class);
         }
     }
 

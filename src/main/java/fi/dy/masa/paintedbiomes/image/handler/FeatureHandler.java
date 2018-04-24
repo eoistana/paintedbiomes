@@ -30,7 +30,7 @@ public class FeatureHandler extends Handler<FeatureHandler>
 {
     protected StructureSpots structureSpots;
 
-    protected FeatureHandler(int dimension) {
+    public FeatureHandler(int dimension) {
         super(dimension);
     }
 
@@ -75,15 +75,18 @@ public class FeatureHandler extends Handler<FeatureHandler>
                                 BlockPos templateAnchor = new BlockPos(x, getHeightFromPixel(pixel), z);
 
                                 Template template = StructureIdToTemplateMapping.getInstance().getTemplate(server, c);
-                                BlockPos templateSize = template.getSize();
-                                BlockPos templateAnchorOpposite = templateAnchor.add(templateSize);
-                                int chunkXOpposite = templateAnchorOpposite.getX() >> 4;
-                    int chunkZOpposite = templateAnchorOpposite.getZ() >> 4;
-
-                if(chunkXOpposite>=chunkX && chunkZOpposite>=chunkZ)
-                {
-                    structureSpots.addStructureAt(template, pos, c, templateAnchor);
-                }
+                                if(template != null)
+                                {
+                                    BlockPos templateSize = template.getSize();
+                                    BlockPos templateAnchorOpposite = templateAnchor.add(templateSize);
+                                    int chunkXOpposite = templateAnchorOpposite.getX() >> 4;
+                                    int chunkZOpposite = templateAnchorOpposite.getZ() >> 4;
+    
+                                    if(chunkXOpposite>=chunkX && chunkZOpposite>=chunkZ)
+                                    {
+                                        structureSpots.addStructureAt(template, pos, c, templateAnchor);
+                                    }
+                                }
                             }
                         }
                     }
@@ -120,8 +123,10 @@ public class FeatureHandler extends Handler<FeatureHandler>
     @Override
     protected IImageReader getImageReader()
     {
-        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "features");
-        return new ImageReaderSingleRepeating(this.templatePath, "features");
+        Configs conf = Configs.getConfig(dimension);
+        BlockPos initPos = new BlockPos(conf.templateAlignmentX, 0, conf.templateAlignmentZ);
+        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "features", initPos);
+        return new ImageReaderSingleRepeating(this.templatePath, "features", initPos);
     }
 
     public class StructureSpots

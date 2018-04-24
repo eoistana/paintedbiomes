@@ -3,6 +3,7 @@ package fi.dy.masa.paintedbiomes.image.handler;
 import fi.dy.masa.paintedbiomes.config.Configs;
 import fi.dy.masa.paintedbiomes.image.reader.IImageReader;
 import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 public abstract class Handler<H extends Handler<H>> 
 {
-    private static final TIntObjectHashMap<Handler<?>> HANDLERS = new TIntObjectHashMap<Handler<?>>();
+    private static final THashMap<Class<?>, TIntObjectHashMap<Handler<?>>> HANDLERS = new THashMap<>(); 
     protected static File templateBasePathGlobal;
     protected static File templateBasePathWorld;
 
@@ -31,12 +32,13 @@ public abstract class Handler<H extends Handler<H>>
     @SuppressWarnings("unchecked")
     public static <H extends Handler<H>> H getHandler(Class<H> hClass, int dimension)
     {
-        Handler<?> handler = HANDLERS.get(dimension);
+        HANDLERS.putIfAbsent(hClass, new TIntObjectHashMap<>());
+        Handler<?> handler = HANDLERS.get(hClass).get(dimension);
         if (handler != null) return (H)handler;
 
         try {
             handler =  hClass.getConstructor(int.class).newInstance(dimension);
-            HANDLERS.put(dimension, handler);
+            HANDLERS.get(hClass).put(dimension, handler);
             return (H)handler;
         } catch (InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException
@@ -107,20 +109,19 @@ public abstract class Handler<H extends Handler<H>>
 
     protected void expireUnusedImage(int threshold)
     {
-        // TODO Auto-generated method stub
         this.imageReader.expireImage(threshold);
     }
 
     private static int timer;
-    public static void tickTimeouts()
+    public static void tickTimeouts(Class<?> hClass)
     {
         if (++timer >= 200)
         {
             timer = 0;
             int threshold = 300 * 1000; // 5 minute timeout for non-accessed images
-            TIntObjectIterator<Handler<?>> iterator = HANDLERS.iterator();
-
-            for (int i = HANDLERS.size(); i > 0; --i)
+            TIntObjectIterator<Handler<?>> iterator = HANDLERS.get(hClass).iterator();
+            
+            while(iterator.hasNext())
             {
                 iterator.advance();
                 Handler<?> handler = iterator.value();

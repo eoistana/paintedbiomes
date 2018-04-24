@@ -9,9 +9,9 @@ public class ImageReaderSingleRepeating extends ImageReaderSingle
     protected boolean repeatX;
     protected boolean repeatZ;
 
-    public ImageReaderSingleRepeating(File imagePath, String imageName)
+    public ImageReaderSingleRepeating(File imagePath, String imageName, BlockPos initPos)
     {
-        super(imagePath, imageName);
+        super(imagePath, imageName, initPos);
     }
 
     @Override

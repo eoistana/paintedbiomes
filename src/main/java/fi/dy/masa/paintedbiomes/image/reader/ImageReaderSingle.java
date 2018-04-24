@@ -3,7 +3,6 @@ package fi.dy.masa.paintedbiomes.image.reader;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 public class ImageReaderSingle extends ImageReaderBase
@@ -33,10 +32,13 @@ public class ImageReaderSingle extends ImageReaderBase
     protected long lastAccessed;
 
 
-    public ImageReaderSingle(File imagePath, String imageName)
+    public ImageReaderSingle(File imagePath, String imageName, BlockPos initPos)
     {
         super(imagePath);
         this.fileNamePrefix = imageName;
+        
+        this.worldPosMin = this.worldPosMax = initPos;
+        this.imageData = loadImage(this.worldPosMin.getX(), this.worldPosMin.getZ());
     }
 
     @Override
@@ -57,7 +59,6 @@ public class ImageReaderSingle extends ImageReaderBase
             if(this.imageData == null)
             {
                 this.imageData = loadImage(blockX, blockZ);
-                initData(this.imageData);
             }
             lastAccessed = System.currentTimeMillis();
             return this.imageData;
@@ -68,6 +69,7 @@ public class ImageReaderSingle extends ImageReaderBase
     @Override
     public boolean isLocationCoveredByTemplate(int blockX, int blockZ) 
     {
+        if(this.worldPosMin == null) return true;
         return blockX >= this.worldPosMin.getX() && blockX <= this.worldPosMax.getX() 
                 && blockZ >= this.worldPosMin.getZ() && blockZ <= this.worldPosMax.getZ();
     }
@@ -89,7 +91,7 @@ public class ImageReaderSingle extends ImageReaderBase
         this.templateFlip = 0;
 
         this.areaSize = rotateAndFlip(new BlockPos(this.imageWidth, 0, this.imageHeight), this.templateRotation, this.templateFlip);		
-        this.worldPosMin = new BlockPos(0, 0, 0);
+        //this.worldPosMin = new BlockPos(0, 0, 0);
         this.worldPosMax = new BlockPos(Math.abs(this.areaSize.getX()), 0, Math.abs(this.areaSize.getZ())).add(this.worldPosMin);
 
         this.worldX = 0;
@@ -100,17 +102,6 @@ public class ImageReaderSingle extends ImageReaderBase
         this.maxZ = this.imageHeight;
         this.areaSizeX = this.imageWidth;
         this.areaSizeZ = this.imageHeight;
-    }
-
-    protected BlockPos rotateAndFlip(BlockPos pos, int templateRotation, int templateFlip)
-    {
-        pos = pos.rotate(Rotation.values()[templateRotation]);
-        int x = pos.getX();
-        if ((templateFlip & 0x1) != 0) x = -x; // Flip the template on the X-axis
-        int y = pos.getY();
-        int z = pos.getZ();
-        if ((templateFlip & 0x2) != 0) z = -z; // Flip the template on the Z-axis
-        return new BlockPos(x, y, z);
     }
 
     protected int rotateAndFlipX(int x, int z, int templateRotation, int templateFlip)

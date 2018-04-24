@@ -361,7 +361,7 @@ public class Configs
         
         //TODO:
         structureIdToStructureNameMapping.addMapping(1, "house");
-        
+        structureIdToStructureNameMapping.addMapping(0xFFFF, "house");
 	}
 
 	private void readColorToBiomeMappings(Configuration conf)

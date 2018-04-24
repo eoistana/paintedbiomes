@@ -1,6 +1,7 @@
 package fi.dy.masa.paintedbiomes.image.handler;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -16,7 +17,7 @@ public class BiomeHandler extends Handler<BiomeHandler>
 {
     private int unpaintedAreaBiomeID;
 
-    protected BiomeHandler(int dimension)
+    public BiomeHandler(int dimension)
     {
         super(dimension);
     }
@@ -70,13 +71,16 @@ public class BiomeHandler extends Handler<BiomeHandler>
     protected void onInit(Configs configs)
     {
         this.unpaintedAreaBiomeID = getBiomeIDForRegistryName(configs.unpaintedAreaBiomeName);
+        
     }
 
     @Override
     protected IImageReader getImageReader()
     {
-        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "biomes");
-        return new ImageReaderSingleRepeating(this.templatePath, "biomes");
+        Configs conf = Configs.getConfig(this.dimension);
+        BlockPos pos = new BlockPos(conf.templateAlignmentX, 0, conf.templateAlignmentZ);
+        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "biomes", pos);
+        return new ImageReaderSingleRepeating(this.templatePath, "biomes", pos);
     }
 
 
