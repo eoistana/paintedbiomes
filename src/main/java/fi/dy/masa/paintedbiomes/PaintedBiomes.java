@@ -1,12 +1,17 @@
 package fi.dy.masa.paintedbiomes;
 
+import java.io.File;
+
 import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import fi.dy.masa.paintedbiomes.config.Configs;
 import fi.dy.masa.paintedbiomes.event.PaintedBiomesEventHandler;
 import fi.dy.masa.paintedbiomes.reference.Reference;
@@ -18,6 +23,7 @@ public class PaintedBiomes
 {
     @Mod.Instance(Reference.MOD_ID)
     public static PaintedBiomes instance;
+    public static String configDirPath;
 
     public static Logger logger;
 
@@ -27,11 +33,18 @@ public class PaintedBiomes
         instance = this;
         logger = event.getModLog();
         Configs.setConfigDir(event.getModConfigurationDirectory());
+        configDirPath = new File(event.getModConfigurationDirectory(), Reference.MOD_ID).getAbsolutePath();
 
         PaintedBiomesEventHandler handler = new PaintedBiomesEventHandler();
         MinecraftForge.EVENT_BUS.register(handler);
         MinecraftForge.TERRAIN_GEN_BUS.register(handler);
     }
+    
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+    }
+
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
@@ -53,7 +66,7 @@ public class PaintedBiomes
     public void onFingerPrintViolation(FMLFingerprintViolationEvent event)
     {
         // Not running in a dev environment
-        if (event.isDirectory() == false)
+        if (event.isDirectory() == false && logger!=null)
         {
             logger.warn("*********************************************************************************************");
             logger.warn("*****                                    WARNING                                        *****");

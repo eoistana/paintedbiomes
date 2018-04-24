@@ -2,6 +2,7 @@ package fi.dy.masa.paintedbiomes.config;
 
 import java.io.File;
 import java.util.Map;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -13,8 +14,9 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import fi.dy.masa.paintedbiomes.PaintedBiomes;
-import fi.dy.masa.paintedbiomes.image.ColorToBiomeMapping;
-import fi.dy.masa.paintedbiomes.image.ImageHandler;
+import fi.dy.masa.paintedbiomes.mappings.ColorToBiomeMapping;
+import fi.dy.masa.paintedbiomes.image.handler.BiomeHandler;
+import fi.dy.masa.paintedbiomes.mappings.StructureIdToTemplateMapping;
 import fi.dy.masa.paintedbiomes.reference.Reference;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -58,9 +60,6 @@ public class Configs
     public int repeatTemplateNegativeX;
     public int repeatTemplateNegativeZ;
     
-    public boolean useHeightMapRepeating;
-    public boolean useSingleHeightMapImage;
-
     private Configs(File configFile, boolean isMaster)
     {
         this.configFile = configFile;
@@ -68,7 +67,6 @@ public class Configs
         this.enabledInDimensions = new int[0];
         this.useSingleTemplateImage = true;
         this.useCustomColorMappings = true;
-        this.useSingleHeightMapImage = true;
     }
 
     private Configs(File configDir, int dimension)
@@ -136,7 +134,7 @@ public class Configs
         loadPerDimensionConfigs();
 
         File worldTemplateDir = (worldConfigDir != null) ? new File(worldConfigDir, "templates") : null;
-        ImageHandler.setTemplateBasePaths(new File(globalConfigDir, "templates"), worldTemplateDir);
+        BiomeHandler.setTemplateBasePaths(new File(globalConfigDir, "templates"), worldTemplateDir);
     }
 
     private static void loadPerDimensionConfigs()
@@ -216,8 +214,6 @@ public class Configs
         this.chunkProviderType          = old.chunkProviderType;
         this.chunkProviderOptions       = old.chunkProviderOptions;
         this.enabledInDimensions        = old.enabledInDimensions.clone();
-        this.useSingleHeightMapImage    = old.useSingleHeightMapImage;
-        this.useHeightMapRepeating      = old.useHeightMapRepeating;
 
         return this;
     }
@@ -317,11 +313,14 @@ public class Configs
         this.overrideChunkProvider = prop.getBoolean();
 
         prop = conf.get(category, "chunkProviderType", this.chunkProviderType);
+        prop.setComment("The ChunkProvider to use. Valid values: VANILLA_DEFAULT, VANILLA_FLAT, VANILLA_HELL, VANILLA_END, PAINTEDBIOMES");
         this.chunkProviderType = prop.getString() != null ? prop.getString() : "";
 
         prop = conf.get(category, "chunkProviderOptions", this.chunkProviderOptions);
         prop.setComment("Extra options for the ChunkProvider (used for FLAT and DEFAULT).");
         this.chunkProviderOptions = prop.getString() != null ? prop.getString() : "";
+        
+        this.readStructureIdToStructureNameMappings(conf);
 
         // These config values only exist and are used in the non-per-dimension configs
         if (this.isMaster)
@@ -353,7 +352,19 @@ public class Configs
         return this;
     }
 
-    private void readColorToBiomeMappings(Configuration conf)
+    private void readStructureIdToStructureNameMappings(Configuration conf)
+    {
+    	ConfigCategory configCategory = conf.getCategory("StructureIdToStructureNameMappings");
+        configCategory.setComment("Mappings");
+        
+        StructureIdToTemplateMapping structureIdToStructureNameMapping = new StructureIdToTemplateMapping();
+        
+        //TODO:
+        structureIdToStructureNameMapping.addMapping(1, "house");
+        
+	}
+
+	private void readColorToBiomeMappings(Configuration conf)
     {
         ConfigCategory configCategory = conf.getCategory("ColorToBiomeMappings");
         configCategory.setComment(  "Mappings from biome's registry name to the RGB color value.\n" +

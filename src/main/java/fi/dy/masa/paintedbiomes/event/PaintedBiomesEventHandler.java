@@ -23,7 +23,8 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToAccessFieldException;
 import fi.dy.masa.paintedbiomes.PaintedBiomes;
 import fi.dy.masa.paintedbiomes.config.Configs;
-import fi.dy.masa.paintedbiomes.image.ImageHandler;
+import fi.dy.masa.paintedbiomes.image.handler.BiomeHandler;
+import fi.dy.masa.paintedbiomes.image.handler.FeatureHandler;
 import fi.dy.masa.paintedbiomes.world.BiomeProviderPaintedBiomes;
 import fi.dy.masa.paintedbiomes.world.GenLayerBiomeGeneration;
 import fi.dy.masa.paintedbiomes.world.GenLayerBiomeIndex;
@@ -36,7 +37,7 @@ public class PaintedBiomesEventHandler
     {
         if (event.phase == TickEvent.Phase.START)
         {
-            ImageHandler.tickTimeouts();
+            BiomeHandler.tickTimeouts();
         }
     }
 
@@ -68,7 +69,7 @@ public class PaintedBiomesEventHandler
     {
         if (event.getWorld().isRemote == false && Configs.getEffectiveMainConfig().useGenLayer == false)
         {
-            ImageHandler.removeImageHandler(event.getWorld().provider.getDimension());
+            BiomeHandler.removeImageHandler(event.getWorld().provider.getDimension());
         }
     }
 
@@ -78,7 +79,8 @@ public class PaintedBiomesEventHandler
         if (Configs.getEffectiveMainConfig().useGenLayer)
         {
             PaintedBiomes.logger.info("Registering Painted Biomes biome GenLayers");
-            ImageHandler.getImageHandler(0).init(event.getSeed());
+            //ImageHandler.getImageHandler(0).init(event.getSeed());
+            BiomeHandler.getBiomeHandler(0).init(event.getSeed());
             GenLayer[] newGens = event.getNewBiomeGens().clone();
             newGens[0] = new GenLayerBiomeGeneration(event.getSeed(), newGens[0], event.getWorldType(), ChunkGeneratorSettings.Factory.jsonToFactory("").build());
             newGens[1] = new GenLayerBiomeIndex(event.getSeed(), newGens[1], event.getWorldType(), ChunkGeneratorSettings.Factory.jsonToFactory("").build());
@@ -119,9 +121,10 @@ public class PaintedBiomesEventHandler
         try
         {
             // Re-initialize the ImageHandler when a world loads, to update config values etc.
-            ImageHandler imageHandler = ImageHandler.getImageHandler(dimension).init(world.getSeed());
+            //ImageHandler imageHandler = ImageHandler.getImageHandler(dimension).init(world.getSeed());
+            BiomeHandler biomeHandler = BiomeHandler.getBiomeHandler(dimension).init(world.getSeed());
 
-            BiomeProvider newBiomeProvider = new BiomeProviderPaintedBiomes(world, world.getBiomeProvider(), imageHandler);
+            BiomeProvider newBiomeProvider = new BiomeProviderPaintedBiomes(world, world.getBiomeProvider(), biomeHandler);
             ReflectionHelper.setPrivateValue(WorldProvider.class, world.provider, newBiomeProvider, "field_76578_c", "biomeProvider");
         }
         catch (UnableToAccessFieldException e)
@@ -193,10 +196,10 @@ public class PaintedBiomesEventHandler
         {
             return new ChunkGeneratorEnd(world, world.getWorldInfo().isMapFeaturesEnabled(), world.getSeed(), new BlockPos(100, 50, 0));
         }
-        else if (chunkProviderType.equals("PAINTEDBIOMES_HEIGHTMAPPED"))
+        else if (chunkProviderType.equals("PAINTEDBIOMES"))
         {
-        	ImageHandler imageHandler = ImageHandler.getImageHandler(world.provider.getDimension()).init(world.getSeed());
-        	return new ChunkGeneratorPaintedBiomes(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions, imageHandler);
+        	FeatureHandler featureHandler = FeatureHandler.getFeatureHandler(world.provider.getDimension()).init(world.getSeed());
+        	return new ChunkGeneratorPaintedBiomes(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled(), generatorOptions, featureHandler);
         }
 
         return null;

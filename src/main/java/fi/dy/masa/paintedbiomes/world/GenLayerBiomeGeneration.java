@@ -4,7 +4,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.gen.ChunkGeneratorSettings;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerBiome;
-import fi.dy.masa.paintedbiomes.image.ImageHandler;
+import fi.dy.masa.paintedbiomes.image.handler.BiomeHandler;
 
 public class GenLayerBiomeGeneration extends GenLayerBiome
 {
@@ -21,13 +21,13 @@ public class GenLayerBiomeGeneration extends GenLayerBiome
         int i = 0;
         int endX = x + width;
         int endZ = z + length;
-        ImageHandler imageHandler = ImageHandler.getImageHandler(0);
+        BiomeHandler biomeHandler = BiomeHandler.getBiomeHandler(0);
 
         for (int tz = z; tz < endZ; ++tz)
         {
             for (int tx = x; tx < endX; ++tx)
             {
-                ints[i] = imageHandler.getBiomeIDAt(tx << 2, tz << 2, ints[i]);
+                ints[i] = biomeHandler.getBiomeIDAt(tx << 2, tz << 2, ints[i]);
                 i++;
             }
         }

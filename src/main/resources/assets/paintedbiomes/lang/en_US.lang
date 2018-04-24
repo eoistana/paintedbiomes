@@ -1,0 +1,3 @@
+paintedbiomes.msg.command.usage.text=/pbcommand
+paintedbiomes.msg.command.success.text=Successfully called Command!
+paintedbiomes.msg.command.failure.text=An error occurred while running Command. Please check the log.

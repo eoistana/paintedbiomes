@@ -2,6 +2,7 @@ package fi.dy.masa.paintedbiomes.world;
 
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ReportedException;
@@ -12,20 +13,20 @@ import net.minecraft.world.biome.BiomeCache;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import fi.dy.masa.paintedbiomes.image.ImageHandler;
+import fi.dy.masa.paintedbiomes.image.handler.BiomeHandler;
 
 
 public class BiomeProviderPaintedBiomes extends BiomeProvider
 {
     protected BiomeCache biomeCache;
     protected BiomeProvider parent;
-    protected ImageHandler imageHandler;
+    protected BiomeHandler biomeHandler;
 
-    public BiomeProviderPaintedBiomes(World world, BiomeProvider biomeProviderParent, ImageHandler imageHandler)
+    public BiomeProviderPaintedBiomes(World world, BiomeProvider biomeProviderParent, BiomeHandler biomeHandler)
     {
         super(world.getWorldInfo());
         this.parent = biomeProviderParent;
-        this.imageHandler = imageHandler;
+        this.biomeHandler = biomeHandler;
         this.biomeCache = new BiomeCache(this);
     }
 
@@ -147,7 +148,7 @@ public class BiomeProviderPaintedBiomes extends BiomeProvider
 
     protected Biome getBiomeFromTemplateAt(int blockX, int blockZ, int defaultBiomeID)
     {
-        return Biome.getBiome(this.imageHandler.getBiomeIDAt(blockX, blockZ, defaultBiomeID));
+        return Biome.getBiome(this.biomeHandler.getBiomeIDAt(blockX, blockZ, defaultBiomeID));
     }
 
     @Override

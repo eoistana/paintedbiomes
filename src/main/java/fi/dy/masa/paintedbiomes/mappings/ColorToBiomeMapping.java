@@ -1,4 +1,4 @@
-package fi.dy.masa.paintedbiomes.image;
+package fi.dy.masa.paintedbiomes.mappings;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
