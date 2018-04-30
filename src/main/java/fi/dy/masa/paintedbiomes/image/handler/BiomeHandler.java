@@ -79,8 +79,12 @@ public class BiomeHandler extends Handler<BiomeHandler>
     {
         Configs conf = Configs.getConfig(this.dimension);
         BlockPos pos = new BlockPos(conf.templateAlignmentX, 0, conf.templateAlignmentZ);
-        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "biomes", pos);
-        return new ImageReaderSingleRepeating(this.templatePath, "biomes", pos);
+        if(this.useSingleTemplateImage)
+            if(conf.useTemplateRepeating)
+                return new ImageReaderSingleRepeating(this.templatePath, "biomes", pos, conf);
+            else 
+                return new ImageReaderSingle(this.templatePath, "biomes", pos);
+        return null;
     }
 
 

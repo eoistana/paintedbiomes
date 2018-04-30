@@ -134,8 +134,12 @@ public class FeatureHandler extends Handler<FeatureHandler>
     {
         Configs conf = Configs.getConfig(dimension);
         BlockPos initPos = new BlockPos(conf.templateAlignmentX, 0, conf.templateAlignmentZ);
-        if(this.useSingleTemplateImage) return new ImageReaderSingle(this.templatePath, "features", initPos);
-        return new ImageReaderSingleRepeating(this.templatePath, "features", initPos);
+        if(this.useSingleTemplateImage)
+            if(conf.useTemplateRepeating)
+                return new ImageReaderSingleRepeating(this.templatePath, "features", initPos, conf);
+            else 
+                return new ImageReaderSingle(this.templatePath, "features", initPos);
+        return null;
     }
 
     public class StructureSpots

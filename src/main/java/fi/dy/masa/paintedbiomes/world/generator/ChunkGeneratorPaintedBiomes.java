@@ -69,7 +69,6 @@ public class ChunkGeneratorPaintedBiomes extends ChunkGeneratorOverworld {
             oceanMonumentGenerator = (StructureOceanMonument)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(oceanMonumentGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.OCEAN_MONUMENT);
             woodlandMansionGenerator = (WoodlandMansion)net.minecraftforge.event.terraingen.TerrainGen.getModdedMapGen(woodlandMansionGenerator, net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.WOODLAND_MANSION);
             
-            initOldGenerationVariables(worldIn);
         }
         this.rand = new Random(seed);
         this.world = worldIn;
@@ -85,6 +84,8 @@ public class ChunkGeneratorPaintedBiomes extends ChunkGeneratorOverworld {
         {
             this.oceanBlock = Blocks.WATER.getDefaultState();
         }
+
+        initOldGenerationVariables(worldIn);
     }
 
     @Override
@@ -416,7 +417,6 @@ public class ChunkGeneratorPaintedBiomes extends ChunkGeneratorOverworld {
     public void replaceBiomeBlocks(int x, int z, ChunkPrimer primer, Biome[] biomesIn)
     {
         double[] depthBuffer = this.surfaceNoise.getRegion(new double[256], (double)(x * 16), (double)(z * 16), 16, 16, 0.0625D, 0.0625D, 1.0D);
-        IBlockState waterState = Blocks.WATER.getDefaultState();
         IBlockState airState = Blocks.AIR.getDefaultState();
 
         for (int i = 0; i < 16; ++i)
@@ -426,10 +426,10 @@ public class ChunkGeneratorPaintedBiomes extends ChunkGeneratorOverworld {
                 Biome biome = biomesIn[j + i * 16];
                 biome.genTerrainBlocks(this.world, this.rand, primer, x * 16 + i, z * 16 + j, depthBuffer[j + i * 16]);
                 int l = 255;
-                for(;l>0;++l)
+                for(;l>0;--l)
                 {
                     IBlockState blockState = primer.getBlockState(i, l, j);
-                    if(blockState == airState || blockState == waterState) continue;
+                    if(blockState == airState || blockState == this.oceanBlock) continue;
                     else break;
                 }
                 this.blockHeights[j + i * 16] = l;
