@@ -47,10 +47,19 @@ public class FeatureHandler extends Handler<FeatureHandler>
             if(alpha == 0x00) return defaultHeight;
             int pixel = imageReader.getRGB(blockX, blockZ);
             int height = getHeightFromPixel(pixel);
-            if(alpha == 0xFF) return height;			
-            return defaultHeight + (int)(((double)alpha / 255.0) * (height-defaultHeight));  
+            if(alpha == 0xFF) return height;
+            return defaultHeight + (int)(((double)alpha / 255.0) * (height-defaultHeight));
         }
         return defaultHeight;
+    }
+
+    public int getAlphaAt(int blockX, int blockZ)
+    {
+        if(isLocationCoveredByTemplate(blockX, blockZ))
+        {
+            return imageReader.getImageAlpha(blockX, blockZ);
+        }
+        return 0;
     }
 
     public ArrayList<StructureSpots.StructureSpot> getStructureSpots(MinecraftServer server, int chunkX, int chunkZ) 

@@ -462,7 +462,7 @@ public class Configs
     {
         try
         {
-            return Integer.parseInt(prop.getString(), 16);
+            return Integer.parseInt(prop.getString().trim(), 16);
         }
         catch (NumberFormatException e)
         {
