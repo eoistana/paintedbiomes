@@ -102,66 +102,6 @@ public class ImageReaderSingle extends ImageReaderBase
         this.areaSizeZ = this.imageHeight;
     }
 
-    protected int rotateAndFlipX(int x, int z, int templateRotation, int templateFlip)
-    {
-        int imageX = 0;
-
-        switch (templateRotation)
-        {
-        case 0: // normal (0 degrees) template rotation
-            imageX = x;
-            break;
-        case 1: // 90 degree template rotation clock-wise
-            imageX = z;
-            break;
-        case 2: // 180 degree template rotation clock-wise
-            imageX = -x;
-            break;
-        case 3: // 270 degree template rotation clock-wise
-            imageX = -z;
-            break;
-        default:
-        }
-
-        // Flip the template on the X-axis
-        if ((templateFlip & 0x1) != 0)
-        {
-            imageX = -imageX;
-        }
-
-        return imageX;
-    }
-
-    protected int rotateAndFlipZ(int x, int z, int templateRotation, int templateFlip)
-    {
-        int imageZ = 0;
-
-        switch (templateRotation)
-        {
-        case 0: // normal (0 degrees) template rotation
-            imageZ = z;
-            break;
-        case 1: // 90 degree template rotation clock-wise
-            imageZ = -x;
-            break;
-        case 2: // 180 degree template rotation clock-wise
-            imageZ = -z;
-            break;
-        case 3: // 270 degree template rotation clock-wise
-            imageZ = x;
-            break;
-        default:
-        }
-
-        // Flip the template on the X-axis
-        if ((templateFlip & 0x2) != 0)
-        {
-            imageZ = -imageZ;
-        }
-
-        return imageZ;
-    }
-
     @Override
     protected void onExpireImage(int threshold)
     {

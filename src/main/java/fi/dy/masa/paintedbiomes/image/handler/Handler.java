@@ -1,5 +1,6 @@
 package fi.dy.masa.paintedbiomes.image.handler;
 
+import fi.dy.masa.paintedbiomes.PaintedBiomes;
 import fi.dy.masa.paintedbiomes.config.Configs;
 import fi.dy.masa.paintedbiomes.image.reader.IImageReader;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -10,6 +11,10 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.util.ReportedException;
 
 public abstract class Handler<H extends Handler<H>> 
 {
@@ -44,8 +49,12 @@ public abstract class Handler<H extends Handler<H>>
                 | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e)
         {
-            //TODO: Log error
-            return null;
+            PaintedBiomes.logger.error("Error in handler initialization.", e);
+            
+            CrashReport crashreport = CrashReport.makeCrashReport(e, "Error in handler initialization.");
+            CrashReportCategory crashreportcategory = crashreport.makeCategory("HandlerType");
+            crashreportcategory.addCrashSection("Class<H> ", hClass.getName());
+            throw new ReportedException(crashreport);
         }
     }
 

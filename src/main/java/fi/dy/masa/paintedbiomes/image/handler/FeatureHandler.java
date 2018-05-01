@@ -78,14 +78,13 @@ public class FeatureHandler extends Handler<FeatureHandler>
                         if(isLocationCoveredByTemplate(x, z))
                         {
                             int pixel = imageReader.getRGB(x, z);
-                            int c = pixel & 0x0000FFFF;
+                            int c = pixel & 0x0000FFFF; // Structures are contained in the green and blue channels
                             if(c != 0)
                             {
-                                BlockPos templateAnchor = new BlockPos(x, getHeightFromPixel(pixel), z);
-
                                 Template template = StructureIdToTemplateMapping.getInstance().getTemplate(server, c);
                                 if(template != null)
                                 {
+                                    BlockPos templateAnchor = new BlockPos(x, getHeightFromPixel(pixel), z);
                                     BlockPos templateSize = template.getSize();
                                     BlockPos templateAnchorOpposite = templateAnchor.add(templateSize);
                                     int chunkXOpposite = templateAnchorOpposite.getX() >> 4;
