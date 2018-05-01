@@ -99,7 +99,7 @@ public class FeatureHandler extends Handler<FeatureHandler>
                             }
                         }
                     }
-                }				
+                }
             }
             return structureSpots.getStructureSpots(pos);
         }
@@ -244,7 +244,7 @@ public class FeatureHandler extends Handler<FeatureHandler>
             }
 
             public void addBlocksToWorldChunk(World world, ChunkPos chunkPos)
-            {				
+            {
                 PlacementSettings placement = new PlacementSettings()
                 .setRotation(rotation)
                 .setMirror(mirror)
@@ -255,7 +255,6 @@ public class FeatureHandler extends Handler<FeatureHandler>
                 BlockPos pos = blockPos.add(-Math.min(0, transformedSize.getX()+1), 0, -Math.min(0, transformedSize.getZ()+1));
 
                 template.addBlocksToWorldChunk(world, pos, placement);
-
                 parseStructureBlocks(world, template, pos, placement);
             }
 

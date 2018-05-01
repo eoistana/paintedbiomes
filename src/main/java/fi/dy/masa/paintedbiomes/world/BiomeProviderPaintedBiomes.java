@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import fi.dy.masa.paintedbiomes.image.handler.BiomeHandler;
 
-
 public class BiomeProviderPaintedBiomes extends BiomeProvider
 {
     protected BiomeCache biomeCache;

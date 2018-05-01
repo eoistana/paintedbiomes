@@ -86,6 +86,4 @@ public class BiomeHandler extends Handler<BiomeHandler>
                 return new ImageReaderSingle(this.templatePath, "biomes", pos);
         return null;
     }
-
-
 }

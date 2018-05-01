@@ -125,11 +125,7 @@ public abstract class Handler<H extends Handler<H>>
             {
                 iterator.advance();
                 Handler<?> handler = iterator.value();
-
-                if (handler.useSingleTemplateImage == false)
-                {
-                    handler.expireUnusedImage(threshold);
-                }
+                handler.expireUnusedImage(threshold);
             }
         }
     }

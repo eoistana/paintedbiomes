@@ -44,7 +44,7 @@ public class StructureIdToTemplateMapping
     public Template getTemplate(MinecraftServer server, int structureId)
     {
         if(this.structureIdToTemplateMappings.containsKey(structureId)) return this.structureIdToTemplateMappings.get(structureId);
-        if(!this.structureIdToNameMappings.containsKey(structureId)) return null;    	
+        if(!this.structureIdToNameMappings.containsKey(structureId)) return null;
         Template template = getTemplateManager().getTemplate(server, new ResourceLocation(getStructureNameForId(structureId)));
         this.structureIdToTemplateMappings.putIfAbsent(structureId, template);
         return template;

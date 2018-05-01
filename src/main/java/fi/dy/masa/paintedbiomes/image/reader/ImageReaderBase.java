@@ -112,7 +112,7 @@ public abstract class ImageReaderBase implements IImageReader
         this.imageWidth = imageData.getWidth();
         onInitData();
     }
-    
+
     protected static BlockPos rotateAndFlip(BlockPos pos, int templateRotation, int templateFlip)
     {
         pos = pos.rotate(Rotation.values()[templateRotation]);

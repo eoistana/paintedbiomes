@@ -89,7 +89,7 @@ public class ImageReaderSingle extends ImageReaderBase
 
         this.templateFlip = 0;
 
-        this.areaSize = rotateAndFlip(new BlockPos(this.imageWidth, 0, this.imageHeight), this.templateRotation, this.templateFlip);		
+        this.areaSize = rotateAndFlip(new BlockPos(this.imageWidth, 0, this.imageHeight), this.templateRotation, this.templateFlip);
         this.worldPosMax = new BlockPos(Math.abs(this.areaSize.getX()), 0, Math.abs(this.areaSize.getZ())).add(this.worldPosMin);
 
         this.worldX = 0;
