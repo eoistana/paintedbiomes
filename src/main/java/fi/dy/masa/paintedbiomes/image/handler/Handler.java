@@ -129,8 +129,8 @@ public abstract class Handler<H extends Handler<H>>
             timer = 0;
             int threshold = 300 * 1000; // 5 minute timeout for non-accessed images
             TIntObjectIterator<Handler<?>> iterator = HANDLERS.get(hClass).iterator();
-            
-            while(iterator.hasNext())
+
+            for(int i=0;i<HANDLERS.get(hClass).size();++i)
             {
                 iterator.advance();
                 Handler<?> handler = iterator.value();

@@ -63,8 +63,8 @@ public class ImageReaderRegion extends ImageReaderBase
     {
         long then = System.currentTimeMillis() - threshold;
         TLongObjectIterator<ImageCache> it = images.iterator();
-        
-        while(it.hasNext())
+
+        for(int i=0;i<images.size();++i)
         {
             it.advance();
             if(then > it.value().lastAccessed)
@@ -78,7 +78,6 @@ public class ImageReaderRegion extends ImageReaderBase
     protected void onInitData()
     {
         // TODO Auto-generated method stub
-
     }
 
     class ImageCache
