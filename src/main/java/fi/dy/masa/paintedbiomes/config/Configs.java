@@ -36,6 +36,7 @@ public class Configs
 
     private File configFile;
     private boolean isMaster;
+    private boolean useBGROrderInConfig;
 
     public boolean useGenLayer;
     public int[] enabledInDimensions;
@@ -331,6 +332,10 @@ public class Configs
             prop.setComment("A list of dimensions where Painted Biomes should be enabled.");
             this.enabledInDimensions = prop.getIntList();
 
+            prop = conf.get(category, "useBGROrderInConfig", this.useBGROrderInConfig);
+            prop.setComment("If true, then the colors i nthe config are specified in BGR order instead of RGB");
+            this.useBGROrderInConfig = prop.getBoolean();
+
             prop = conf.get(category, "useCustomColorsAsDefaults", this.useCustomColorMappings);
             prop.setComment("This only affects whether the missing ColorToBiomeMappings values, when initially added, use the custom colors\n" +
                             "from Amidst, or if they just map the Biome ID to the red channel.\n" +
@@ -371,9 +376,12 @@ public class Configs
 
 	private void readColorToBiomeMappings(Configuration conf)
     {
+        String colorOrder = this.useBGROrderInConfig ? "BGR" : "RGB";
+        String redExample = this.useBGROrderInConfig ? "0000FF" : "FF0000";
         ConfigCategory configCategory = conf.getCategory("ColorToBiomeMappings");
-        configCategory.setComment(  "Mappings from biome's registry name to the RGB color value.\n" +
-                                    "Specified as hex values, without the leading '0x'.\n" +
+        configCategory.setComment(  "Mappings from biome's registry name to the " + colorOrder + " color value.\n" +
+                                    "Specified in " + colorOrder + " order, as hexadecimal strings, without the leading '0x' or '#'.\n" +
+                                    "For example '" + redExample + "' for red.\n" +
                                     "To find out the biome registry names, you can use for example:\n" +
                                     "1) The TellMe mod (the command '/tellme dump biomes' will write them to a file in config/tellme/)\n" +
                                     "2) The mod MiniHUD (version 0.10.0 or later) to see the registry name of the biome you are currently in");
@@ -405,7 +413,19 @@ public class Configs
 
             if (prop != null)
             {
-                color = getIntFromHexString(registryName, prop, color);
+                try
+                {
+                    color = getIntFromHexString(registryName, prop, color);
+
+                    if (this.useBGROrderInConfig)
+                    {
+                        color = convertRGBAndBGR(color);
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    PaintedBiomes.logger.warn("Failed to parse color value '{}' for biome '{}'", prop.getString(), registryName);
+                }
             }
             // No mapping found in the config, add a default mapping, so that all the existing biomes will get added to the config
             else
@@ -421,7 +441,8 @@ public class Configs
                     }
                 }
 
-                prop = new Property(registryName, String.format("%06X", color), Property.Type.STRING);
+                int colorConfig = this.useBGROrderInConfig ? convertRGBAndBGR(color) : color;
+                prop = new Property(registryName, String.format("%06X", colorConfig), Property.Type.STRING);
                 configCategory.put(registryName, prop);
             }
 
@@ -430,9 +451,10 @@ public class Configs
             // The color is already in use, print a warning
             if (oldId != -1)
             {
+                int colorPrint = this.useBGROrderInConfig ? convertRGBAndBGR(color) : color;
                 PaintedBiomes.logger.warn("**** WARNING **** WARNING **** WARNING ****");
                 PaintedBiomes.logger.warn(String.format("The color %06X (%d), attempted to use for biome '%s' (ID: %d), is already in use!",
-                        color, color, registryName, biomeId));
+                        colorPrint, color, registryName, biomeId));
                 PaintedBiomes.logger.warn("The biomes using that color are:");
 
                 for (Biome biomeTmp : ForgeRegistries.BIOMES.getValuesCollection())
@@ -469,6 +491,14 @@ public class Configs
             PaintedBiomes.logger.warn("Failed to parse color value '{}' for biome '{}'", prop.getString(), registryName);
         }
         return defaultValue;
+    }
+
+    private static int convertRGBAndBGR(int colorIn)
+    {
+        int colorOut = colorIn & 0xFF00;
+        colorOut |= (colorIn & 0x0000FF) << 16;
+        colorOut |= (colorIn & 0xFF0000) >>> 16;
+        return colorOut;
     }
 
     private int checkAndFixConfigValueInt(String configName, Property prop, int min, int max, int defaultValue)
